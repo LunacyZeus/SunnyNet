@@ -238,22 +238,30 @@ func (ps direct) DialContext(ctx context.Context, network, addr string) (net.Con
 	}
 
 	m.Control = func(network, address string, c syscall.RawConn) error {
-		return c.Control(func(fd uintptr) {
+		var controlErr error
+		err := c.Control(func(fd uintptr) {
 			ifceName := "ppp0"
 			if ifceName != "" {
 				if err := bindDevice(fd, ifceName); err != nil {
 					log.Printf("bind device: %v", err)
+					controlErr = fmt.Errorf("bind device failed: %w", err)
+					return
 				}
 			}
 			/*
-				if d.Mark != 0 {
-					if err := setMark(fd, d.Mark); err != nil {
-						log.Warnf("set mark: %v", err)
-					}
-				}
-
+			   if d.Mark != 0 {
+			      if err := setMark(fd, d.Mark); err != nil {
+			         log.Warnf("set mark: %v", err)
+			      }
+			   }
 			*/
 		})
+
+		// 如果控制函数内部设置了错误，或者c.Control本身返回了错误
+		if controlErr != nil {
+			return controlErr
+		}
+		return err
 	}
 
 	if !strings.Contains(addr, "127.0.0.1") && !strings.Contains(addr, "[::1]") {
