@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"github.com/qtgolang/SunnyNet/src/crypto/tls"
 	"golang.org/x/net/proxy"
+	"log"
 	"net"
 	"net/url"
 	"strings"
+	"syscall"
 	"time"
 )
 
@@ -234,6 +236,26 @@ func (ps direct) DialContext(ctx context.Context, network, addr string) (net.Con
 	if m.Timeout < time.Millisecond {
 		m.Timeout = 5 * time.Second
 	}
+
+	m.Control = func(network, address string, c syscall.RawConn) error {
+		return c.Control(func(fd uintptr) {
+			ifceName := "ppp0"
+			if ifceName != "" {
+				if err := bindDevice(fd, ifceName); err != nil {
+					log.Printf("bind device: %v", err)
+				}
+			}
+			/*
+				if d.Mark != 0 {
+					if err := setMark(fd, d.Mark); err != nil {
+						log.Warnf("set mark: %v", err)
+					}
+				}
+
+			*/
+		})
+	}
+
 	if !strings.Contains(addr, "127.0.0.1") && !strings.Contains(addr, "[::1]") {
 		mip := RouterIPInspect(ps.OutRouterIP)
 		if mip != nil {
