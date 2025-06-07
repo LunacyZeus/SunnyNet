@@ -9,7 +9,6 @@
 package public
 
 import (
-	"fmt"
 	"github.com/qtgolang/SunnyNet/src/http"
 	"github.com/qtgolang/SunnyNet/src/websocket"
 	"math/rand"
@@ -36,7 +35,7 @@ const Information = `
 `
 
 func init() {
-	fmt.Println(Information)
+	//fmt.Println(Information)
 }
 
 // TCP请求相关
