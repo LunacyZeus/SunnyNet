@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
-	"github.com/qtgolang/SunnyNet/SunnyNet"
 	"github.com/qtgolang/SunnyNet/src/crypto/tls"
 	"golang.org/x/net/proxy"
 	"log"
@@ -14,6 +13,9 @@ import (
 	"syscall"
 	"time"
 )
+
+// 指定网卡接口
+var GlobalInterface string
 
 var dnsConfig = &tls.Config{
 	ClientSessionCache: tls.NewLRUClientSessionCache(32),
@@ -241,8 +243,8 @@ func (ps direct) DialContext(ctx context.Context, network, addr string) (net.Con
 	m.Control = func(network, address string, c syscall.RawConn) error {
 		var controlErr error
 		err := c.Control(func(fd uintptr) {
-			if SunnyNet.GlobalInterface != "" { //读取全局变量 设置出口网卡
-				if err := bindDevice(fd, SunnyNet.GlobalInterface); err != nil {
+			if GlobalInterface != "" { //读取全局变量 设置出口网卡
+				if err := bindDevice(fd, GlobalInterface); err != nil {
 					log.Printf("bind device: %v", err)
 					controlErr = fmt.Errorf("bind device failed: %w", err)
 					return

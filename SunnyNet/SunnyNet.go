@@ -2866,5 +2866,5 @@ func (s *Sunny) SetDnsServer(server string) {
 
 // SetInterface 设置网卡出口口变量
 func (s *Sunny) SetInterface(iface string) {
-	GlobalInterface = iface
+	SunnyProxy.GlobalInterface = iface
 }
