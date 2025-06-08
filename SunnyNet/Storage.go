@@ -8,6 +8,9 @@ import (
 var SunnyStorageLock sync.Mutex
 var SunnyStorage = make(map[int]*Sunny)
 
+// 指定网卡接口
+var GlobalInterface string
+
 // httpStorage Sunny中间件http回调CALL时储存对象
 var httpStorage = make(map[int]*proxyRequest)
 

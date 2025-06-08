@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+	"github.com/qtgolang/SunnyNet/SunnyNet"
 	"github.com/qtgolang/SunnyNet/src/crypto/tls"
 	"golang.org/x/net/proxy"
 	"log"
@@ -240,9 +241,8 @@ func (ps direct) DialContext(ctx context.Context, network, addr string) (net.Con
 	m.Control = func(network, address string, c syscall.RawConn) error {
 		var controlErr error
 		err := c.Control(func(fd uintptr) {
-			ifceName := "ppp0"
-			if ifceName != "" {
-				if err := bindDevice(fd, ifceName); err != nil {
+			if SunnyNet.GlobalInterface != "" { //读取全局变量 设置出口网卡
+				if err := bindDevice(fd, SunnyNet.GlobalInterface); err != nil {
 					log.Printf("bind device: %v", err)
 					controlErr = fmt.Errorf("bind device failed: %w", err)
 					return

@@ -823,7 +823,7 @@ func (s *proxyRequest) httpProcessing(aheadData []byte, Tag string) {
 		h2, _ = s.RwObj.Peek(11 - len(aheadData))
 	}
 	hh = []byte(string(aheadData) + string(h2))
- 
+
 	if string(hh) == "PRI * HTTP/" {
 		s.defaultScheme = "https"
 		s.h2Request(aheadData)
@@ -2862,4 +2862,9 @@ func (s *Sunny) handleClientConn(conn net.Conn) {
 }
 func (s *Sunny) SetDnsServer(server string) {
 	dns.SetDnsServer(server)
+}
+
+// SetInterface 设置网卡出口口变量
+func (s *Sunny) SetInterface(iface string) {
+	GlobalInterface = iface
 }
